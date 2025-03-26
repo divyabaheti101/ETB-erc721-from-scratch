@@ -68,4 +68,18 @@ contract ERC721 {
 
         emit Transfer(from, to, tokenId);
     }
+
+    //Standard TransferFrom only
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public {
+        transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) public {
+        safeTransferFrom(from, to, tokenId, "");
+    }
+
+    //ovesimplified
+    function _checkOnERC721Received() private pure returns(bool){
+        return true;
+    }
 }
