@@ -4,6 +4,7 @@ pragma solidity ^0.8.2;
 contract ERC721 {
     event ApprovalForAll(address indexed _owner, address indexed _operator, bool approved);
     event Approval(address indexed _owner, address indexed _approvedAddr, uint256 _tokenId);
+    event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
 
     mapping(address => uint256) internal _balances;
     mapping(uint256 => address) internal _owners;
@@ -46,5 +47,25 @@ contract ERC721 {
     function getApproved(uint256 tokenId) public view returns(address){
         require(_owners[tokenId] != address(0), "Token Id doesn't exist");
         return _tokenApprovals[tokenId];
+    }
+
+    //transfer ownership of NFT
+    function transferFrom(address from, address to, uint256 tokenId) public {
+        address owner = ownerOf(tokenId);
+
+        require(msg.sender == owner || msg.sender ==  getApproved(tokenId) || isApprovedForAll(owner, msg.sender),
+            "msg.sender doesn't have rights"
+        );
+        require(owner == from, "From is not the owner");
+        require(to != address(0), "To cannot be zero address");
+        require(_owners[tokenId] != address(0), "token doesn't exist");
+
+        approve(address(0), tokenId);
+        _balances[from] -= 1;
+        _balances[to] += 1;
+
+        _owners[tokenId] = to;
+
+        emit Transfer(from, to, tokenId);
     }
 }
