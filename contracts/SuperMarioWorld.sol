@@ -4,8 +4,8 @@ pragma solidity ^0.8.2;
 import "./ERC721.sol";
 
 contract SuperMarioWorld is ERC721{
-    string public name;
-    string public symbol;
+    string public name; //EIP721 Metadata
+    string public symbol; //EIP721 Metadata
     uint256 public tokenCount;
     mapping (uint256 => string) private _tokeURIs;
 
@@ -15,7 +15,7 @@ contract SuperMarioWorld is ERC721{
     }
 
     // Returns a url that points to the metadata
-    function tokenURI(uint256 tokenId) public view returns (string memory){
+    function tokenURI(uint256 tokenId) public view returns (string memory){ //EIP721 Metadata
         require(_owners[tokenId] != address(0), "Token Id doesn't exist");
         return _tokeURIs[tokenId];
     }
@@ -29,5 +29,9 @@ contract SuperMarioWorld is ERC721{
 
         emit Transfer(address(0), msg.sender, tokenCount);
 
+    }
+
+    function supportsInterface(bytes4 interfaceId) public pure override returns(bool){
+        return interfaceId == 0x80ac58cd || interfaceId == 0x5b5e139f;
     }
 }
