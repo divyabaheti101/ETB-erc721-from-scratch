@@ -33,5 +33,6 @@ contract SuperMarioWorld is ERC721{
 
     function supportsInterface(bytes4 interfaceId) public pure override returns(bool){
         return interfaceId == 0x80ac58cd || interfaceId == 0x5b5e139f;
+        //the new condn is to cehck for metadata as well for opensea
     }
 }
