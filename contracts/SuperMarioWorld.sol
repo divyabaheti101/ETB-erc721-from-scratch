@@ -19,4 +19,15 @@ contract SuperMarioWorld is ERC721{
         require(_owners[tokenId] != address(0), "Token Id doesn't exist");
         return _tokeURIs[tokenId];
     }
+
+    //creates a new nft inside our collection
+    function mint(string memory _tokeURI) public {
+        tokenCount += 1; // this is also our tokenId
+        _balances[msg.sender] += 1;
+        _owners[tokenCount] = msg.sender;
+        _tokeURIs[tokenCount] = _tokeURI;
+
+        emit Transfer(address(0), msg.sender, tokenCount);
+
+    }
 }
