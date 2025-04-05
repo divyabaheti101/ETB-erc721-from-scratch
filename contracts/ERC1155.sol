@@ -78,6 +78,13 @@ contract ERC1155{
         require(_checkOnBatchERC1155Received(), "Receiver is not implemented");
     }
 
+    //ERC165 compliant
+    // tell everyone that we support ERC1155
+    // interfaceId == 0xd9b67a26
+    function supportsInterface(bytes4 interfaceId) public pure virtual returns(bool){
+        return interfaceId == 0xd9b67a26;
+    }
+
     function _checkOnERC1155Received() private pure returns(bool){
         //Dummy and oversimplifed version
         return true;
