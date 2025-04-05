@@ -11,4 +11,17 @@ contract ERC1155{
         require(account != address(0), "Zero address mentioned");
         return _balances[tokenId][account];
     }
+
+    // gets the balance of multiple accounts and tokens
+    function balanceOfBatch(address[] memory accounts, uint256[] memory ids) public view returns(uint256[] memory){
+        require(accounts.length == ids.length, "Accounts and IDs not of same length");
+
+        uint256[] memory batchBalances = new uint256[](accounts.length);
+
+        for(uint256 i = 0; i< accounts.length; i++){
+            batchBalances[i] = balanceOf(ids[i], accounts[i]);
+        }
+
+        return batchBalances;
+    }
 }
