@@ -3,11 +3,13 @@
 
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-module.exports = buildModule("SuperMarioWorldModule", (m) => {
+module.exports = buildModule("SuperMarioWorldOZModule", (m) => {
 
-  const SuperMarioWorld = m.contract("SuperMarioWorld", ["SuperMarioWorld", "SPRM"]);
+  const SuperMarioWorldOZ = m.contract("SuperMarioWorldOZ", ["SuperMarioWorldOZ", "SPRMOZ"]);
   
-  m.call(SuperMarioWorld, "mint", ["https://ipfs.io/ipfs/bafkreifylxi6tb3dgezitryc222hmxh6cp5zoandvmcgqdj5bffsv3wa5u"]);
+  //cid taken from pinata for the json or metadat of the nft.
+  //m.call(SuperMarioWorldOZ, "mint", ["https://ipfs.io/ipfs/bafkreifylxi6tb3dgezitryc222hmxh6cp5zoandvmcgqdj5bffsv3wa5u"]);
+  m.call(SuperMarioWorldOZ, "mint", ["https://ipfs.io/ipfs/bafkreiebeggiozca5yugbvjaytwozyd3vn7y3pulusjuve2lkbbyklbgum"]);
 
-  return { SuperMarioWorld };
+  return { SuperMarioWorldOZ };
 });
