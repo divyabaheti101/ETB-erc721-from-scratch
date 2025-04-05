@@ -6,6 +6,8 @@ contract ERC1155{
 
     event TransferSingle(address indexed _operator, address indexed _from, address indexed _to, uint256 _id, uint256 _amount);
 
+    event TransferBatch(address indexed _operator, address indexed _from, address indexed _to, uint256[] _ids, uint256[] _amounts);
+
     // Mapping of token id to account and its balance of that token id
     mapping(uint256 => mapping(address => uint256)) internal _balances;
 
@@ -60,8 +62,31 @@ contract ERC1155{
         require(_checkOnERC1155Received(), "Receiver is not implemented");
     }
 
+    function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts) public virtual{
+        require(from == msg.sender || isApprovedForAll(from, msg.sender), "msg.sender is not authorized to send this asset");
+        require(to != address(0), "Zero Address");
+        require(ids.length == amounts.length, "Ids and Amounts not of same length");
+        for (uint256 i = 0; i < ids.length; i++) {
+            uint256 id = ids[i];
+            uint256 amount = amounts[i];
+
+            _transfer(from, to, id, amount);
+        }
+
+        emit TransferBatch(msg.sender, from, to, ids, amounts);
+
+        require(_checkOnBatchERC1155Received(), "Receiver is not implemented");
+    }
+
     function _checkOnERC1155Received() private pure returns(bool){
         //Dummy and oversimplifed version
         return true;
     }
+
+    function _checkOnBatchERC1155Received() private pure returns(bool){
+        //Dummy and oversimplifed version
+        return true;
+    }
+
+    
 }
