@@ -1,7 +1,12 @@
 import styled from 'styled-components';
 import { NFTCard, NftPhoto } from './components/NFTCard';
+import { useState } from 'react';
 
 function App() {
+
+	const [showModal, setShowModal] = useState(false)
+	const [selectedNft, setSelectedNft] = useState()
+
   let nfts = [
 	{name: "Mario", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
 	{name: "Luigi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
@@ -11,8 +16,15 @@ function App() {
 	{name: "Luigi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
 	{name: "Yoshi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
 	{name: "Donkey Kong", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"}
-  
   ]
+
+  function toggleModal(i) {
+	if (i >= 0) {
+		setSelectedNft(nfts[i])
+	}
+	setShowModal(!showModal)
+  }
+
   return (
     <div className="App">
 		<Container>
@@ -21,12 +33,16 @@ function App() {
 			<Grid>
 			{
 				nfts.map((nft, i) => 
-					<NFTCard nft = {nft} key={i}/>
+					<NFTCard nft={nft} key={i} toggleModal={ () => toggleModal(i) }/>
 				)
 			}
 			</Grid>
 		</Container>
-		<NFTModal nft={nfts[0]}/>
+		{
+			showModal &&
+			<NFTModal nft={selectedNft} 
+			toggleModal = {() => toggleModal()}/>
+		}
     </div>
   );
 }
@@ -46,11 +62,24 @@ const NFTModal = (props) => {
 						<SectionText>Attributes</SectionText>
 					</div>
 				</ModalGrid>
+				<CloseButton onClick={() => props.toggleModal()}>
+					&times;
+				</CloseButton>
 			</ModalContent>
 		</Modal>
 	)
 }
 
+
+const CloseButton = styled.span`
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 20px 25px 0 0;
+	font-size: 20px;
+	font-weight: bold;
+	cursor: pointer;
+`
 const ModalTitle = styled.h1`
 	margin: 0;
 `
