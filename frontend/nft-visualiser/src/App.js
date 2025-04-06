@@ -16,8 +16,8 @@ function App() {
   return (
     <div className="App">
 		<Container>
-			<Title></Title>
-			<Subtitle></Subtitle>
+			<Title>Super Mario World Collection</Title>
+			<Subtitle>xxxxxx blah blah</Subtitle>
 			<Grid>
 			{
 				nfts.map((nft, i) => 
@@ -26,9 +26,42 @@ function App() {
 			}
 			</Grid>
 		</Container>
+		<NFTModal />
     </div>
   );
 }
+
+const NFTModal = (props) => {
+	return (
+		<Modal>
+			<ModalContent>
+
+			</ModalContent>
+		</Modal>
+	)
+}
+
+const Modal = styled.div`
+	position: fixed;
+	display: flex;
+	align-items: center;
+	z-index: 100% //stays on top of everything
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto; // enable scroll if needed
+	background-color: rgba(0,0,0,0.5);
+`
+
+const ModalContent = styled.div`
+	position: relative;
+	width: 900px;
+	margin: auto;
+	background-color: white;
+	border-radius: 20px;
+	padding: 20px;
+`
 
 const Title = styled.h1`
 	margin: 0;
@@ -50,7 +83,7 @@ const Container = styled.div`
 
 const Grid = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr; //fr - fraciton so this will do 4 parts
 	row-gap: 40px;
 `
 
