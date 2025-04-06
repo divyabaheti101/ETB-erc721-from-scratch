@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { NFTCard } from './components/NFTCard';
+import { NFTCard, NftPhoto } from './components/NFTCard';
 
 function App() {
   let nfts = [
@@ -26,20 +26,48 @@ function App() {
 			}
 			</Grid>
 		</Container>
-		<NFTModal />
+		<NFTModal nft={nfts[0]}/>
     </div>
   );
 }
 
 const NFTModal = (props) => {
+	let nft = props.nft;
 	return (
 		<Modal>
 			<ModalContent>
-
+				<ModalGrid>
+					<NftPhoto style={{backgroundImage: `url(${nft && nft.image})`, height: 400, width: 400}} />
+					<div>
+						<ModalTitle>{nft.name}</ModalTitle>
+						<Paragraph>{`You own ${nft.copies} copies`}</Paragraph>
+						<SectionText>Description</SectionText>
+						<Paragraph style={{width: 400}}>{nft.description}</Paragraph>
+						<SectionText>Attributes</SectionText>
+					</div>
+				</ModalGrid>
 			</ModalContent>
 		</Modal>
 	)
 }
+
+const ModalTitle = styled.h1`
+	margin: 0;
+`
+
+const Paragraph = styled.p`
+	margin: 0 0 15px 0;
+`
+
+const SectionText = styled.h3`
+	margin: 5px 0 5px 0;
+`
+
+const ModalGrid = styled.div`
+	display: inline-grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 40px;
+`
 
 const Modal = styled.div`
 	position: fixed;
