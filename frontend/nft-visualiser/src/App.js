@@ -3,6 +3,7 @@ import { NFTCard, NftPhoto } from './components/NFTCard';
 import { useState } from 'react';
 import { NFTModal } from './components/NFTModal';
 import { ethers } from 'ethers';
+const axios = require("axios")
 
 function App() {
 
@@ -44,7 +45,39 @@ function App() {
 		abi,
 		ethersProvider
 	)
+
+	let numberOfNfts = (await nftCollection.tokenCount()).toNumber()
+	let collectionSymbol = await nftCollection.symbol()
+
+	let accounts = Array(numberOfNfts).fill(address)
+	let ids = Array.from({length: numberOfNfts}, (_, i) => i)
+	let copies = await nftCollection.balanceofBatch(accounts, ids)
+
+	let tempArray = []
+	let baseUrl = ""
+
+	for (let i=0; i<numberOfNfts; i++){
+		if (i == 0) {
+			let tokenURI = await nftCollection.uri(i)
+			baseUrl = tokenURI.replace(/\d+.json/, "")
+			let metadata = await getMetadatFromIpfs(tokenURI)
+			metadata.symbol = collectionSymbol
+			metadata.copies = copies[i]
+			tempArray.push(metadata)
+		} else {
+			let metadata = await getMetadatFromIpfs(baseUrl + `${i}.json`)
+			metadata.symbol = collectionSymbol
+			metadata.copies = copies[i]
+			tempArray.push(metadata)
+		}
+	}
+	setNfts(tempArray)
   }
+
+  	async function getMetadatFromIpfs(tokenURI) {
+		let metadata = await axios.get(tokenURI)
+		return metadata.data;
+	}
 
   return (
     <div className="App">
