@@ -136,6 +136,18 @@ const Grid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr; //fr - fraciton so this will do 4 parts
 	row-gap: 40px;
+
+	@media(max-width: 1200px){
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+
+	@media(max-width: 900){
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@media(max-width: 600px){
+		grid-template-columns: 1fr;
+	}
 `
 
 export default App;
