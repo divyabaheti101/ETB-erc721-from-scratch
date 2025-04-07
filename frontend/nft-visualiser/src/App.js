@@ -1,26 +1,36 @@
 import styled from 'styled-components';
 import { NFTCard, NftPhoto } from './components/NFTCard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NFTModal } from './components/NFTModal';
 import { ethers } from 'ethers';
-const axios = require("axios")
+import { connect } from './helpers';
+import axios from 'axios';
 
 function App() {
+
+	let initialNfts = [
+		{name: "Mario", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Luigi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Yoshi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Donkey Kong", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Mario", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Luigi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Yoshi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
+		{name: "Donkey Kong", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"}
+	]
 
 	const [showModal, setShowModal] = useState(false)
 	const [selectedNft, setSelectedNft] = useState()
 	const [nfts, setNfts] = useState(initialNfts)
 
-  let initialNfts = [
-	{name: "Mario", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Luigi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Yoshi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Donkey Kong", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Mario", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Luigi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Yoshi", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"},
-	{name: "Donkey Kong", symbol: "SMWC", copies: 10, image: "https://ipfs.io/ipfs/bafybeiavwldch7gi535jr7hkmyz4v3afmsgemy3yokf4eq55hdbjwgqyxu"}
-  ]
+	useEffect(() => {
+		( async () => {
+			const address = await connect()
+			if (address){
+				getNfts(address)
+			}
+		})()
+	}, [])
 
   function toggleModal(i) {
 	if (i >= 0) {
@@ -30,14 +40,14 @@ function App() {
   }
 
   async function getNfts(address) {
-	const rpc = "https://rpc-amoy.polygon.technology"
+	const rpc = "https://rpc-amoy.polygon.technology" // alchemy so that we don't have the downtime
 	const ethersProvider = new ethers.JsonRpcProvider(rpc)
 
 	let abi = [
 		"function symbol() public view returns(string memory)",
 		"function tokenCount() public view returns(uint256)",
 		"function uri(uint256 _tokenId) public view returns(string memory)",
-		"funciton balanceOfBatch(address[] accounts, uint256[] ids) public view returns(uint256[] memory) "
+		"function balanceOfBatch(address[] accounts, uint256[] ids) public view returns(uint256[])"
 	]
 
 	let nftCollection = new ethers.Contract(
@@ -45,29 +55,31 @@ function App() {
 		abi,
 		ethersProvider
 	)
+	
 
-	let numberOfNfts = (await nftCollection.tokenCount()).toNumber()
+	let numberOfNfts = Number(await nftCollection.tokenCount())
 	let collectionSymbol = await nftCollection.symbol()
+	
 
 	let accounts = Array(numberOfNfts).fill(address)
-	let ids = Array.from({length: numberOfNfts}, (_, i) => i)
-	let copies = await nftCollection.balanceofBatch(accounts, ids)
+	let ids = Array.from({length: numberOfNfts}, (_, i) => i+1)
+	let copies = await nftCollection.balanceOfBatch(accounts, ids)
 
 	let tempArray = []
 	let baseUrl = ""
 
-	for (let i=0; i<numberOfNfts; i++){
-		if (i == 0) {
+	for (let i=1; i<=numberOfNfts; i++){
+		if (i == 1) {
 			let tokenURI = await nftCollection.uri(i)
-			baseUrl = tokenURI.replace(/\d+.json/, "")
-			let metadata = await getMetadatFromIpfs(tokenURI)
+			baseUrl = tokenURI.replace(/'\d+.json/, "")
+			let metadata = await getMetadatFromIpfs(baseUrl + `${i}.json`)
 			metadata.symbol = collectionSymbol
 			metadata.copies = copies[i]
 			tempArray.push(metadata)
 		} else {
 			let metadata = await getMetadatFromIpfs(baseUrl + `${i}.json`)
 			metadata.symbol = collectionSymbol
-			metadata.copies = copies[i]
+			metadata.copies = copies[i-1]
 			tempArray.push(metadata)
 		}
 	}
@@ -75,6 +87,7 @@ function App() {
   }
 
   	async function getMetadatFromIpfs(tokenURI) {
+		tokenURI = tokenURI.replace(/'/g, ""); // my base uri while creating contract has got ' at start and end so removing it
 		let metadata = await axios.get(tokenURI)
 		return metadata.data;
 	}
