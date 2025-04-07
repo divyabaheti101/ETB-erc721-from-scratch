@@ -1,3 +1,5 @@
+import { NFTProgressBar } from "./NFTProgressBar";
+
 const { default: styled } = require("styled-components");
 const { NftPhoto } = require("./NFTCard");
 
@@ -22,6 +24,7 @@ const NFTModal = (props) => {
 										<AttributeText>{attribute.trait_type}</AttributeText>
 										<AttributeText style={{float: 'right'}}>{attribute.value}</AttributeText>
 									</div>
+                                    <NFTProgressBar percent={attribute.value * 10} />
 								</div>
 							)
 						}
